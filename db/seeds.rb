@@ -8,8 +8,8 @@ prng = Random.new
         title: Faker::Commerce.product_name,
         sku: prng.rand(100000..999999),
         color: Faker::Commerce.color,
-        size: prng.rand(0.1..10.0),
-        cost: fake_price
+        size: prng.rand(0.1..10.0).round(1),
+        cost: BigDecimal.new(fake_price.to_s)
     }
     Product.create!(fake_product)
 end
