@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Form, Table, Card, Input } from 'semantic-ui-react';
 import axios from 'axios';
+import _ from 'lodash';
+
+import styles from '../styles/portal.scss';
 
 class Portal extends Component {
     constructor(props) {
@@ -8,7 +11,8 @@ class Portal extends Component {
         this.state = {
             customers: [],
             selectedCustomer: '',
-            products: [],
+            products: {},
+            order: {},
         };
     }
 
@@ -20,8 +24,8 @@ class Portal extends Component {
         ])
             .then(axios.spread((custRes, prodRes) => {
                 const customers = this.mapCustomers(custRes.data);
-                this.setState({ products: prodRes.data });
-                this.setState({ customers });
+                const products = _.keyBy(prodRes.data, 'id');
+                this.setState({ customers, products });
             }));
     }
 
@@ -33,16 +37,18 @@ class Portal extends Component {
     }
 
     displayProducts = (products) => {
-        return products.map((product) => {
+        const mappedProd = Object.values(products);
+        return mappedProd.map((product) => {
             const {
                 title,
                 sku,
                 size,
                 cost,
                 color,
+                id,
             } = product;
             return (
-                <Card>
+                <Card key={id}>
                     <Card.Content>
                         <Card.Header textAlign='center'>{title}</Card.Header>
                         <Card.Description textAlign='center'>
@@ -50,6 +56,13 @@ class Portal extends Component {
                             <p>Color: {color}</p>
                             <p>Size: {size} kg</p>
                             <p>SKU: {sku}</p>
+                            <button
+                                value={id}
+                                className={styles.button}
+                                onClick={this.addToCart}
+                            >
+                                Add To Order
+                            </button>
                         </Card.Description>
                     </Card.Content>
                 </Card>
@@ -57,10 +70,41 @@ class Portal extends Component {
         });
     }
 
+    displayOrderItems = (items) => {
+        const mappedItems = Object.values(items);
+        return mappedItems.map((item) => {
+            const {
+                title,
+                sku,
+                cost,
+                id,
+            } = item;
+            return (
+                <Table.Row key={id}>
+                    <Table.Cell>{title}</Table.Cell>
+                    <Table.Cell>{sku}</Table.Cell>
+                    <Table.Cell>${cost}</Table.Cell>
+                    <Table.Cell><Input placeholder='Quantity' type='number' /></Table.Cell>
+                    <Table.Cell textAlign='right'>${cost}</Table.Cell>
+                </Table.Row>
+            );
+        });
+    };
+
+    addToCart = (e) => {
+        e.preventDefault();
+        console.log(e.target.value);
+    };
+
     handleCustomer = (e, { value }) => this.setState({ selectedCustomer: value });
 
     render() {
-        const { customers, selectedCustomer, products } = this.state;
+        const {
+            customers,
+            selectedCustomer,
+            products,
+            order,
+        } = this.state;
         return (
             <div>
                 <Form>
@@ -78,26 +122,22 @@ class Portal extends Component {
                     {this.displayProducts(products)}
                 </Card.Group>
                 <h5>Order</h5>
-                <Table unstackable>
-                    <Table.Header>
-                        <Table.Row>
-                            <Table.HeaderCell>Product</Table.HeaderCell>
-                            <Table.HeaderCell>SKU</Table.HeaderCell>
-                            <Table.HeaderCell>Unit Price</Table.HeaderCell>
-                            <Table.HeaderCell>Quantity</Table.HeaderCell>
-                            <Table.HeaderCell textAlign='right'>Price</Table.HeaderCell>
-                        </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>Flashlight</Table.Cell>
-                            <Table.Cell>123456</Table.Cell>
-                            <Table.Cell>$20.99</Table.Cell>
-                            <Table.Cell><Input placeholder='Quantity' type='number' /></Table.Cell>
-                            <Table.Cell textAlign='right'>$20.99</Table.Cell>
-                        </Table.Row>
-                    </Table.Body>
-                </Table>
+                <div className={styles.order}>
+                    <Table unstackable>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>Product</Table.HeaderCell>
+                                <Table.HeaderCell>SKU</Table.HeaderCell>
+                                <Table.HeaderCell>Unit Price</Table.HeaderCell>
+                                <Table.HeaderCell>Quantity</Table.HeaderCell>
+                                <Table.HeaderCell textAlign='right'>Price</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {this.displayOrderItems(order)}
+                        </Table.Body>
+                    </Table>
+                </div>
             </div>
         );
     }
