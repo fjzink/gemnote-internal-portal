@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Form } from 'semantic-ui-react';
+import axios from 'axios';
 
 class Portal extends Component {
     constructor(props) {
@@ -12,6 +13,13 @@ class Portal extends Component {
             ],
             selectedCustomer: '',
         };
+    }
+
+    componentDidMount() {
+        axios.get('http://localhost:3000/customers')
+            .then((res) => {
+                console.log(res.data);
+            });
     }
 
     handleCustomer = (e, { value }) => this.setState({ selectedCustomer: value });
