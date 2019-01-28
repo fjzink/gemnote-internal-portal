@@ -93,7 +93,10 @@ class Portal extends Component {
 
     addToCart = (e) => {
         e.preventDefault();
-        console.log(e.target.value);
+        const { order, products } = this.state;
+        const id = e.target.value;
+        order[id] = products[id];
+        this.setState({ order });
     };
 
     handleCustomer = (e, { value }) => this.setState({ selectedCustomer: value });
