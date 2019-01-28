@@ -6,11 +6,7 @@ class Portal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            customers: [
-                { key: 'google', text: 'Google', value: 'google' },
-                { key: 'facebook', text: 'Facebook', value: 'facebook' },
-                { key: 'dropbox', text: 'Dropbox', value: 'dropbox' },
-            ],
+            customers: [],
             selectedCustomer: '',
         };
     }
@@ -18,8 +14,16 @@ class Portal extends Component {
     componentDidMount() {
         axios.get('http://localhost:3000/customers')
             .then((res) => {
-                console.log(res.data);
+                const customers = this.mapCustomers(res.data);
+                this.setState({ customers });
             });
+    }
+
+    mapCustomers = (customers) => {
+        return (customers.map((customer) => {
+            const { name } = customer;
+            return { key: name, text: name, value: name };
+        }));
     }
 
     handleCustomer = (e, { value }) => this.setState({ selectedCustomer: value });
