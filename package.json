@@ -1,0 +1,15 @@
+{
+  "name": "Gemnote",
+  "version": "1.0.0",
+  "repository": "https://github.com/fjzink/gemnote-internal-portal.git",
+  "license": "MIT",
+  "engines": {
+    "node": "10.1.0",
+    "yarn": "1.13.0"
+  },
+  "scripts": {
+    "build": "yarn --cwd client install && yarn --cwd client build",
+    "deploy": "cp -a client/dist/. public/",
+    "heroku-postbuild": "yarn build && yarn deploy"
+  }
+}
