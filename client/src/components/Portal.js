@@ -12,7 +12,8 @@ class Portal extends Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:3000/customers')
+        // const base = 'http://localhost:3000';
+        axios.get('/customers')
             .then((res) => {
                 const customers = this.mapCustomers(res.data);
                 this.setState({ customers });
