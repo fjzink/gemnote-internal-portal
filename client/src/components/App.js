@@ -1,9 +1,11 @@
 import React from 'react';
-import styles from '../styles/styles.scss';
+import Portal from './Portal';
 
 const App = () => {
     return (
-            <div className={styles.hello}>Hello World!</div>
+        <div>
+            <Portal />
+        </div>
     );
 };
 
