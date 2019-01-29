@@ -20,8 +20,8 @@ class Portal extends Component {
     componentDidMount() {
         // const base = 'http://localhost:3000';
         axios.all([
-            axios.get('http://localhost:3000/customers'),
-            axios.get('http://localhost:3000/products'),
+            axios.get('/customers'),
+            axios.get('/products'),
         ])
             .then(axios.spread((custRes, prodRes) => {
                 let customers = this.mapCustomers(custRes.data);
@@ -135,7 +135,7 @@ class Portal extends Component {
         const items = Object.values(order);
         const customer = customers[selectedCustomer];
         // const base = 'http://localhost:3000';
-        axios.post('http://localhost:3000/orders', { order: { items, customer } })
+        axios.post('/orders', { order: { items, customer } })
             .then((res) => {
                 this.setState({ order: {} });
             });
