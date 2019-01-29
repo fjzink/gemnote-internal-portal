@@ -1,24 +1,11 @@
-# README
+# Gemnote Internal Portal
+[Deployed App](https://gemnote-portal.herokuapp.com/)
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is my internal portal for product management. You can select a customer from the dropdown menu, add products to the order, and submit the order to an outside invoicing system (mocked using beeceptor).
 
-Things you may want to cover:
+The front end was built with React and the backend was build with Rails. For the front end I used my own [Webpack configuration](https://github.com/fjzink/react-boilerplate). The back end was built as a JSON API to serve data to the front end.
 
-* Ruby version
+Example ```POST``` request to beeceptor:
+![beeceptor](https://i.imgur.com/gesu864.png)
 
-* System dependencies
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
