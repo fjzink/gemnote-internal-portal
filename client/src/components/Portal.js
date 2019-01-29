@@ -13,14 +13,15 @@ class Portal extends Component {
             selectedCustomer: '',
             products: {},
             order: {},
+            shipping: 10,
         };
     }
 
     componentDidMount() {
         // const base = 'http://localhost:3000';
         axios.all([
-            axios.get('/customers'),
-            axios.get('/products'),
+            axios.get('http://localhost:3000/customers'),
+            axios.get('http://localhost:3000/products'),
         ])
             .then(axios.spread((custRes, prodRes) => {
                 const customers = this.mapCustomers(custRes.data);
@@ -112,13 +113,24 @@ class Portal extends Component {
         this.setState({ order });
     };
 
+    calculateSubtotal = (order) => {
+        const items = Object.values(this.state.order);
+        let subtotal = 0;
+        for (let i = 0; i < items.length; i += 1) {
+            subtotal += items[i].cost * items[i].quantity;
+        }
+        return _.round(subtotal, 2);
+    };
+
     render() {
         const {
             customers,
             selectedCustomer,
             products,
             order,
+            shipping,
         } = this.state;
+        const subtotal = this.calculateSubtotal(order);
         return (
             <div>
                 <Form>
@@ -151,6 +163,34 @@ class Portal extends Component {
                             {this.displayOrderItems(order)}
                         </Table.Body>
                     </Table>
+                </div>
+                <h5>Invoice</h5>
+                <div className={styles.order}>
+                    <Table celled collapsing unstackable>
+                        <Table.Body>
+                            <Table.Row>
+                                <Table.Cell>
+                                    <span className={styles.invoiceHeader}>Subtotal</span>
+                                </Table.Cell>
+                                <Table.Cell>${subtotal}</Table.Cell>
+                            </Table.Row>
+                            <Table.Row>
+                                <Table.Cell>
+                                <span className={styles.invoiceHeader}>Shipping</span>
+                                </Table.Cell>
+                                <Table.Cell>${shipping}</Table.Cell>
+                            </Table.Row>
+                            <Table.Row>
+                                <Table.Cell>
+                                    <span className={styles.invoiceHeader}>Total</span>
+                                </Table.Cell>
+                                <Table.Cell>${_.round(subtotal + shipping, 2)}</Table.Cell>
+                            </Table.Row>
+                        </Table.Body>
+                    </Table>
+                </div>
+                <div className={styles.submit}>
+                    <button className={styles.button}>Submit Order</button>
                 </div>
             </div>
         );
