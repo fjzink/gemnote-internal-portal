@@ -93,7 +93,7 @@ class Portal extends Component {
                     <Table.Cell>{title}</Table.Cell>
                     <Table.Cell>{sku}</Table.Cell>
                     <Table.Cell>${cost}</Table.Cell>
-                    <Table.Cell><Input name={id} onChange={this.handleQuantity} value={this.state.order[id].quantity} placeholder='Quantity' type='number' /></Table.Cell>
+                    <Table.Cell><Input name={id} onChange={this.handleQuantity} value={this.state.order[id].quantity} placeholder='Quantity' type='number' min='0' /></Table.Cell>
                     <Table.Cell textAlign='right'>${_.round(cost * quantity, 2)}</Table.Cell>
                 </Table.Row>
             );
