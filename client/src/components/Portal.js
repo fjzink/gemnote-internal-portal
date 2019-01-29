@@ -122,6 +122,17 @@ class Portal extends Component {
         return _.round(subtotal, 2);
     };
 
+    submitOrder = (e) => {
+        e.preventDefault();
+        const { order } = this.state;
+        const items = Object.values(order);
+        // const base = 'http://localhost:3000';
+        axios.post('http://localhost:3000/orders', { order: items })
+            .then((res) => {
+                this.setState({ order: {} });
+            });
+    };
+
     render() {
         const {
             customers,
@@ -184,13 +195,20 @@ class Portal extends Component {
                                 <Table.Cell>
                                     <span className={styles.invoiceHeader}>Total</span>
                                 </Table.Cell>
-                                <Table.Cell>${_.round(subtotal + shipping, 2)}</Table.Cell>
+                                <Table.Cell>
+                                    ${subtotal === 0 ? 0 : _.round(subtotal + shipping, 2)}
+                                </Table.Cell>
                             </Table.Row>
                         </Table.Body>
                     </Table>
                 </div>
                 <div className={styles.submit}>
-                    <button className={styles.button}>Submit Order</button>
+                    <button
+                        className={styles.button}
+                        onClick={this.submitOrder}
+                    >
+                        Submit Order
+                    </button>
                 </div>
             </div>
         );

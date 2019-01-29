@@ -15,8 +15,22 @@ class OrdersController < ApplicationController
 
   # POST /orders
   def create
-    order = params[:order]
+    prng = Random.new
+    order_details = params[:order].map { |item|
+      item_subtotal = item_subtotal(item)
+      item[:subtotal] = item_subtotal
+      item
+    }
+    total = calc_subtotal(order_details)
     
+    
+    # @order = Order.new(order_params)
+
+    # if @order.save
+    #   render json: @order, status: :created, location: @order
+    # else
+    #   render json: @order.errors, status: :unprocessable_entity
+    # end
   end
 
   # PATCH/PUT /orders/1
@@ -34,6 +48,14 @@ class OrdersController < ApplicationController
   end
 
   private
+    def item_subtotal(item)
+      return item[:cost].to_f * item[:quantity].to_f
+    end
+
+    def calc_subtotal(items)
+      items.reduce(0) { |total, item| total + item[:subtotal]}
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_order
       @order = Order.find(params[:id])
