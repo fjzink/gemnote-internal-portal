@@ -9,7 +9,7 @@ class Portal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            customers: [],
+            customers: {},
             selectedCustomer: '',
             products: {},
             order: {},
@@ -24,7 +24,8 @@ class Portal extends Component {
             axios.get('http://localhost:3000/products'),
         ])
             .then(axios.spread((custRes, prodRes) => {
-                const customers = this.mapCustomers(custRes.data);
+                let customers = this.mapCustomers(custRes.data);
+                customers = _.keyBy(customers, 'id');
                 const products = _.keyBy(prodRes.data, 'id');
                 this.setState({ customers, products });
             }));
@@ -32,8 +33,14 @@ class Portal extends Component {
 
     mapCustomers = (customers) => {
         return (customers.map((customer) => {
-            const { name } = customer;
-            return { key: name, text: name, value: name };
+            const { name, id } = customer;
+            return {
+                id,
+                name,
+                key: name,
+                text: name,
+                value: id,
+            };
         }));
     }
 
@@ -124,10 +131,11 @@ class Portal extends Component {
 
     submitOrder = (e) => {
         e.preventDefault();
-        const { order } = this.state;
+        const { order, customers, selectedCustomer } = this.state;
         const items = Object.values(order);
+        const customer = customers[selectedCustomer];
         // const base = 'http://localhost:3000';
-        axios.post('http://localhost:3000/orders', { order: items })
+        axios.post('http://localhost:3000/orders', { order: { items, customer } })
             .then((res) => {
                 this.setState({ order: {} });
             });
@@ -148,7 +156,7 @@ class Portal extends Component {
                     <Form.Select
                         fluid
                         label='Customer'
-                        options={customers}
+                        options={Object.values(customers)}
                         placeholder='Customer'
                         value={selectedCustomer}
                         onChange={this.handleCustomer}
