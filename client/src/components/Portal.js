@@ -59,7 +59,7 @@ class Portal extends Component {
                             <button
                                 value={id}
                                 className={styles.button}
-                                onClick={this.addToCart}
+                                onClick={this.addToOrder}
                             >
                                 Add To Order
                             </button>
@@ -78,28 +78,39 @@ class Portal extends Component {
                 sku,
                 cost,
                 id,
+                quantity,
             } = item;
             return (
                 <Table.Row key={id}>
                     <Table.Cell>{title}</Table.Cell>
                     <Table.Cell>{sku}</Table.Cell>
                     <Table.Cell>${cost}</Table.Cell>
-                    <Table.Cell><Input placeholder='Quantity' type='number' /></Table.Cell>
-                    <Table.Cell textAlign='right'>${cost}</Table.Cell>
+                    <Table.Cell><Input name={id} onChange={this.handleQuantity} value={this.state.order[id].quantity} placeholder='Quantity' type='number' /></Table.Cell>
+                    <Table.Cell textAlign='right'>${_.round(cost * quantity, 2)}</Table.Cell>
                 </Table.Row>
             );
         });
     };
 
-    addToCart = (e) => {
+    addToOrder = (e) => {
         e.preventDefault();
         const { order, products } = this.state;
         const id = e.target.value;
+        const newItem = products[id];
+        newItem.quantity = 1;
         order[id] = products[id];
         this.setState({ order });
     };
 
     handleCustomer = (e, { value }) => this.setState({ selectedCustomer: value });
+
+    handleQuantity = (e) => {
+        const quantity = e.target.value;
+        const id = e.target.name;
+        const { order } = this.state;
+        order[id].quantity = quantity;
+        this.setState({ order });
+    };
 
     render() {
         const {
