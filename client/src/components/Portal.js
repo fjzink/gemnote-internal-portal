@@ -94,10 +94,27 @@ class Portal extends Component {
                     <Table.Cell>{sku}</Table.Cell>
                     <Table.Cell>${cost}</Table.Cell>
                     <Table.Cell><Input name={id} onChange={this.handleQuantity} value={this.state.order[id].quantity} placeholder='Quantity' type='number' min='0' /></Table.Cell>
+                    <Table.Cell>
+                        <button
+                            className={styles.button}
+                            value={id}
+                            onClick={this.deleteItem}
+                        >
+                            Delete
+                        </button>
+                    </Table.Cell>
                     <Table.Cell textAlign='right'>${_.round(cost * quantity, 2)}</Table.Cell>
                 </Table.Row>
             );
         });
+    };
+
+    deleteItem = (e) => {
+        e.preventDefault();
+        const item = e.target.value;
+        const { order } = this.state;
+        delete order[item];
+        this.setState({ order });
     };
 
     addToOrder = (e) => {
@@ -175,6 +192,7 @@ class Portal extends Component {
                                 <Table.HeaderCell>SKU</Table.HeaderCell>
                                 <Table.HeaderCell>Unit Price</Table.HeaderCell>
                                 <Table.HeaderCell>Quantity</Table.HeaderCell>
+                                <Table.HeaderCell></Table.HeaderCell>
                                 <Table.HeaderCell textAlign='right'>Price</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
